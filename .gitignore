@@ -1,0 +1,29 @@
+# Entorno virtual
+.venv/
+venv/
+
+# Secretos y configuración local
+.env
+database/flyway/flyway.conf
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Tests y herramientas
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# IDE
+.idea/
+.vscode/
+
+# Sistema operativo
+Thumbs.db
+.DS_Store
