@@ -1,0 +1,13 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "AIVA",
+      "Group": "Servers",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "aiva",
+      "Username": "aiva",
+      "SSLMode": "prefer"
+    }
+  }
+}

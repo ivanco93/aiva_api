@@ -5,6 +5,8 @@ from aiva.modules.camera.domain.enums.camera_status import CameraStatus
 
 
 class ListCamerasRequest(BaseModel):
+    """Query params de GET /cameras; solo se envían los filtros que se usan."""
+
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
     name: str | None = Field(default=None, max_length=100, description="Búsqueda parcial por nombre")

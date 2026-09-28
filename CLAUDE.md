@@ -4,10 +4,11 @@ Guía para Claude Code al trabajar en este repositorio.
 
 ## Comandos
 
-Ejecutar desde `C:\Tools\aiva\aiva_api` con el `.venv` activo.
+Ejecutar desde `aiva_api` con el `.venv` activo.
 
 ```powershell
 pip install -r requirements.txt                                   # dependencias
+docker compose up -d                                              # PostgreSQL (5432) + pgAdmin (http://localhost:5050)
 uvicorn aiva.main:app --app-dir src --reload                      # levantar la API (NO usar src.aiva.main:app)
 $env:PYTHONPATH="src"; python -m pytest src/aiva/modules          # todos los tests
 $env:PYTHONPATH="src"; python -m pytest src/aiva/modules/camera/tests   # tests de un módulo
@@ -68,12 +69,12 @@ Las dependencias se arman en `infrastructure/http/dependencies.py`. FastAPI cach
 
 - **Rutas:**
   - `POST /{recurso}` crea.
-  - `POST /{recurso}/list` lista (filtros en el body).
+  - `GET /{recurso}` lista (filtros opcionales en query params: `Annotated[{Schema}, Query()]`).
   - `GET /{recurso}/{id:int}` consulta uno.
   - `PUT /{recurso}/{id:int}` actualiza.
   - `PUT /{recurso}/{id:int}/status` cambia el estado.
   - `DELETE /{recurso}/{id:int}` borra (responde 204).
-  - Usar siempre `:int` en los path params numéricos, para que no choquen con `/health`.
+  - Usar siempre `:int` en los path params numéricos, para que no choquen con rutas fijas.
 - **Respuestas:**
   - Listados: `{ "data": [...], "count": N }`, con paginación `offset`/`limit`.
   - Errores: `{ "detail": "..." }`.
@@ -81,7 +82,7 @@ Las dependencias se arman en `infrastructure/http/dependencies.py`. FastAPI cach
   - Casos de uso: `{Accion}{Entity}UseCase` en `use_cases/{entity}/{accion}_{entity}.py`.
   - Repositorio real: `SqlAlchemy{Entity}Repository`.
   - Excepciones: `*Error`.
-- **Migraciones:** `database/flyway/{module}/V{yyMMddHHmmss}__descripcion.sql`, sin `BEGIN`/`COMMIT` (en MySQL el DDL hace commit implícito). Cada módulo nuevo se añade a `flyway.locations`.
+- **Migraciones:** `database/flyway/{module}/V{yyMMddHHmmss}__descripcion.sql`, sin `BEGIN`/`COMMIT` (Flyway ya envuelve cada migración en una transacción en PostgreSQL). Cada módulo nuevo se añade a `flyway.locations`.
 - **Idioma:** los mensajes de error y los comentarios van en español.
 - **Estilo:** cada carpeta de paquete lleva su `__init__.py` vacío.
 
@@ -98,4 +99,4 @@ Las dependencias se arman en `infrastructure/http/dependencies.py`. FastAPI cach
   - `source_url` puede contener credenciales.
 - No hay autenticación, autorización, auditoría (`created_by`/`updated_by`) ni multi-tenant.
 - No hay `pyproject.toml`, ni configuración de ruff/mypy/import-linter.
-- Las credenciales reales van solo en `.env` y `database/flyway/flyway.conf` (ignorados por git). Los `.example` llevan marcadores. El repositorio es público.
+- Las credenciales reales van solo en `.env` (también las lee `docker-compose.yml`) y `database/flyway/flyway.conf` (ignorados por git). Los `.example` llevan marcadores. El repositorio es público.

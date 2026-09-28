@@ -18,7 +18,7 @@ class SqlAlchemyCameraRepository:
         return CameraMapper.to_entity(model) if model is not None else None
 
     async def find_by_code(self, code: str) -> Camera | None:
-        model = await self._session.scalar(select(CameraModel).where(CameraModel.code == code))
+        model = await self._session.scalar(select(CameraModel).where(func.lower(CameraModel.code) == code.lower()))
         return CameraMapper.to_entity(model) if model is not None else None
 
     async def search(
@@ -34,9 +34,9 @@ class SqlAlchemyCameraRepository:
     ) -> tuple[list[Camera], int]:
         query = select(CameraModel)
         if name:
-            query = query.where(CameraModel.name.contains(name, autoescape=True))
+            query = query.where(CameraModel.name.icontains(name, autoescape=True))
         if code:
-            query = query.where(CameraModel.code == code)
+            query = query.where(func.lower(CameraModel.code) == code.lower())
         if location_id is not None:
             query = query.where(CameraModel.location_id == location_id)
         if status is not None:

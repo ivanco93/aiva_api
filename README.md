@@ -8,14 +8,14 @@ La arquitectura es **DDD + hexagonal**, organizada por módulos. Cada módulo se
 
 - Python 3.14
 - FastAPI + Uvicorn
-- SQLAlchemy 2 (async) + aiomysql → MySQL 8.0.16+
+- SQLAlchemy 2 (async) + asyncpg → PostgreSQL 17 (Docker Compose, con pgAdmin)
 - Pydantic / pydantic-settings
 - Flyway (migraciones SQL)
 - pytest + anyio
 
 ## Puesta en marcha
 
-Desde `C:\Tools\aiva\aiva_api`:
+Desde raíz del proyecto:
 
 ```powershell
 # 1. Entorno virtual y dependencias
@@ -25,9 +25,11 @@ pip install -r requirements.txt
 
 # 2. Variables de entorno
 copy .env.example .env
-#    editar DATABASE_URL, ej: mysql+aiomysql://usuario:password@127.0.0.1:3306/aiva
+#    poner usuario/contraseñas; DATABASE_URL debe coincidir con POSTGRES_*:
+#    postgresql+asyncpg://usuario:password@127.0.0.1:5432/aiva
 
-# 3. Base de datos
+# 3. Base de datos (PostgreSQL + pgAdmin en Docker; lee las credenciales del .env)
+docker compose up -d
 cd database\flyway
 copy flyway.conf.example flyway.conf   # poner credenciales reales solo en flyway.conf
 flyway migrate
@@ -39,6 +41,7 @@ uvicorn aiva.main:app --app-dir src --reload
 
 - Documentación interactiva: http://127.0.0.1:8000/docs
 - Healthcheck general: `GET /api/v1/health`
+- pgAdmin: http://localhost:5050 (modo escritorio, sin pantalla de login). El servidor "AIVA" ya aparece registrado; pide la contraseña de `POSTGRES_PASSWORD` la primera vez.
 
 `--app-dir src` es necesario porque el paquete `aiva` vive dentro de `src/`. La ruta de la app es `aiva.main:app`, no `src.aiva.main:app`.
 

@@ -239,12 +239,12 @@ $env:PYTHONPATH="src"; python -m pytest src/aiva/modules/{module}/tests
 
 - **Rutas:**
   - `POST /{recurso}` crea.
-  - `POST /{recurso}/list` lista (filtros en el body).
+  - `GET /{recurso}` lista (filtros opcionales en query params, recibidos como `Annotated[{Schema}, Query()]`).
   - `GET /{recurso}/{id}` consulta uno.
   - `PUT /{recurso}/{id}` actualiza.
   - `PUT /{recurso}/{id}/status` cambia el estado.
   - `DELETE /{recurso}/{id}` borra (responde 204).
-- **Path params numéricos** con convertidor: `"/{id:int}"`, para que no choquen con rutas fijas como `/health`.
+- **Path params numéricos** con convertidor: `"/{id:int}"`, para que no choquen con rutas fijas (ej. `/{recurso}/stats`).
 - **Listados:** responden `{ "data": [...], "count": N }`, con paginación `offset` / `limit`.
 - **Errores:** `{ "detail": "..." }`, el mismo formato que usa FastAPI por defecto.
 - **Nombres:**

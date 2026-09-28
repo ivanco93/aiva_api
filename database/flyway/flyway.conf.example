@@ -1,4 +1,4 @@
-flyway.url=jdbc:mysql://127.0.0.1:3306/aiva
+flyway.url=jdbc:postgresql://127.0.0.1:5432/aiva
 flyway.user=<usuario>
 flyway.password=<password>
 flyway.locations=filesystem:./camera

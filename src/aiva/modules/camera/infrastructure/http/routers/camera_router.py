@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 
 from aiva.modules.camera.application.builders.change_camera_status_builder import ChangeCameraStatusBuilder
 from aiva.modules.camera.application.builders.create_camera_builder import CreateCameraBuilder
@@ -28,7 +28,7 @@ from aiva.modules.camera.infrastructure.http.schemas.update_camera_request impor
 
 router = APIRouter(prefix="/cameras", tags=["camera"])
 
-# ":int" hace que /cameras/health no se confunda con /cameras/{camera_id}.
+# ":int" evita que futuras rutas fijas (ej. /cameras/stats) se confundan con /cameras/{camera_id}.
 CAMERA_PATH = "/{camera_id:int}"
 
 
@@ -41,12 +41,12 @@ async def create_camera(
     return CameraResponse.model_validate(result)
 
 
-@router.post("/list")
+@router.get("")
 async def list_cameras(
-    body: ListCamerasRequest,
+    query: Annotated[ListCamerasRequest, Query()],
     use_case: Annotated[ListCamerasUseCase, Depends(get_list_cameras_use_case)],
 ) -> CameraListResponse:
-    result = await use_case.execute(ListCamerasQueryBuilder.build(body.model_dump()))
+    result = await use_case.execute(ListCamerasQueryBuilder.build(query.model_dump()))
     return CameraListResponse.model_validate(result)
 
 
